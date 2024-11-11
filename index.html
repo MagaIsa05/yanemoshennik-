@@ -4,8 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Не мошенник</title>
+    <script src="https://js.stripe.com/v3/"></script> <!-- Подключаем библиотеку Stripe -->
 </head>
 <body>
     <h1>Я не мошенник</h1>
+
+    <!-- Форма для ввода данных карты -->
+    <form id="payment-form">
+        <div id="card-element">
+            <!-- В это место будет встроено поле для ввода данных карты -->
+        </div>
+        <button type="submit">Оплатить</button>
+    </form>
+
+    <script>
+        var stripe = Stripe('YOUR_STRIPE_PUBLIC_KEY'); // Ваш публичный ключ Stripe
+        var elements = stripe.elements();
+        var card = elements.create('card'); // Создаем элемент для ввода карты
+        card.mount('#card-element'); // Монтируем поле на страницу
+
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Останавливаем стандартную отправку формы
+
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    // Обработка ошибок (например, неправильные данные карты)
+                    alert(result.error.message);
+                } else {
+                    // Здесь вы отправляете токен на сервер для обработки оплаты
+                    console.log(result.token);
+                    alert('Токен карты получен!');
+                    // Например, вы можете отправить токен на сервер с помощью fetch или AJAX
+                }
+            });
+        });
+    </script>
 </body>
-</html>	
+</html>
